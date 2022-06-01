@@ -1,13 +1,31 @@
 <template>
-  <div class="container mx-auto p-10">
+  <div class="container mx-auto p-10 h-screen flex justify-center items-center">
     <form @submit.prevent="onsubmitedLoggedIn">
-      <input type="text" v-model="form.email">
+      <div class="form-control w-full  center">
+        <label class="label">
+          <span class="label-text">Email</span>
+        </label>
+        <input type="text" v-model="form.email" class="input w-full  mr-3">
+      </div>
+      <div class="form-control w-full ">
+        <label class="label">
+          <span class="label-text">Password</span>
+        </label>
+        <label class="input-group">
+          <input 
+          :type="showPassword ? 'text' : 'password'" 
+          v-model="form.password" 
+          class="input input-bordered w-full"
+          >
+          <button class="btn" type="button" @click="onShowPassword">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+
+        </label>
+      </div>
       <br>
       <br>
-      <input type="password" v-model="form.password">
-      <br>
-      <br>
-      <button type="submit" class="btn">login</button>
+      <button type="submit" class="btn btn-primary btn-block">login</button>
     </form>
   </div>
 </template>
@@ -22,7 +40,8 @@ export default {
         email: '',
         password: ''
       },
-      errors: null
+      errors: null,
+      showPassword: false,
     }
   },
   methods: {
@@ -40,7 +59,11 @@ export default {
           console.log('login gagal', error);
           this.error = error;
         })
-    }
+    },
+    onShowPassword() {
+      this.showPassword = !this.showPassword;
+    },
+
   },
 };
 </script>
