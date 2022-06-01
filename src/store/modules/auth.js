@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
-  removeHeaderToken
+  removeHeaderToken,
+  setHeaderToken
 } from '../../helper/auth'
 const state = {
   user: null,
@@ -20,17 +21,21 @@ const actions = {
   async login({
     commit
   }, data) {
-    await axios.post(`https://e395-182-1-97-249.ap.ngrok.io/api/0.1/login`, data)
-      .then(response => {
-        const token = response.data.token
-        localStorage.setItem('token', token)
-        commit('setAuthenticated', response)
-        // dispatch('get_user')
-      })
-      .catch(error => {
-        console.log(error)
-
-      })
+    return new Promise((resolve, reject) => {
+      axios.post(`https://e395-182-1-97-249.ap.ngrok.io/api/0.1/login`, data)
+        .then(response => {
+          const token = response.data.data.token
+          localStorage.setItem('token', token)
+          setHeaderToken(token)
+          resolve(response)
+        })
+        .catch(error => {
+          console.log(error)
+          commit('resetUser')
+          localStorage.removeItem('token')
+          reject(error)
+        })
+    })
   },
   logout({
     commit
@@ -45,14 +50,14 @@ const actions = {
 }
 
 const mutations = {
-  setUser: (state, data) => (
-    state.user = data,
+  setUser: (state, data) => {
+    state.user = data
     state.isLoggedIn = true
-  ),
-  resetUser: (state) => (
-    state.user = null,
+  },
+  resetUser: (state) => {
+    state.user = null
     state.isLoggedIn = false
-  ),
+  }
 };
 
 export default {
